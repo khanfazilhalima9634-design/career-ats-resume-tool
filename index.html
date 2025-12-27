@@ -651,7 +651,11 @@ Example:
             const pdf = await pdfjsLib.getDocument(pdfData).promise;
             let text = '';
             
-            for (let i = 1; i <= pdf.numPages; i++) {
+           const MAX_PAGES = 5;
+const pagesToRead = Math.min(pdf.numPages, MAX_PAGES);
+
+for (let i = 1; i <= pagesToRead; i++) {
+
                 const page = await pdf.getPage(i);
                 const content = await page.getTextContent();
                 text += content.items.map(item => item.str).join(' ') + ' ';
@@ -672,9 +676,25 @@ Example:
             const cleanJob = jobText.toLowerCase().replace(/[^\w\s]/g, ' ');
             
             // Extract keywords (words with 3+ characters)
-            const jobWords = [...new Set(cleanJob.match(/\b[a-z]{3,}\b/g) || [])];
-            const resumeWords = new Set(cleanResume.match(/\b[a-z]{3,}\b/g) || []);
-            
+            // Better keyword extraction focusing on skills & nouns
+function extractKeywords(text) {
+    const stopWords = new Set([
+        'the','and','for','with','this','that','have','from','your','will','are',
+        'you','our','job','role','work','years','experience','looking','responsible'
+    ]);
+
+    return [...new Set(
+        text
+        .toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter(word => word.length >= 3 && !stopWords.has(word))
+    )];
+}
+
+const jobWords = extractKeywords(cleanJob);
+const resumeWords = new Set(extractKeywords(cleanResume));
+
             // Common stop words to ignore
             const stopWords = new Set(['the', 'and', 'for', 'with', 'this', 'that', 'have', 'from', 'your', 'will', 'are']);
             

@@ -1,204 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>ATS Resume Checker – Free Resume ATS Score Tool</title>
-  <meta name="description" content="Free ATS Resume Checker tool to analyze your resume against job descriptions. Improve ATS score, find missing keywords, and boost interview chances." />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>ATS Resume Checker – Upload Resume File</title>
+<meta name="description" content="Upload your resume file (PDF, DOCX, TXT) and check ATS score against any job description.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- BASIC SEO -->
-  <meta name="robots" content="index, follow" />
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f6f8fa;
-      margin: 0;
-      padding: 0;
-      color: #222;
-    }
-    header {
-      background: #0a66c2;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-    }
-    main {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-      background: #fff;
-    }
-    h1, h2, h3 {
-      color: #0a66c2;
-    }
-    textarea {
-      width: 100%;
-      min-height: 160px;
-      padding: 10px;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-    button {
-      background: #0a66c2;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #084b8a;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      background: #f0f7ff;
-      border-left: 5px solid #0a66c2;
-    }
-    .score {
-      font-size: 28px;
-      font-weight: bold;
-    }
-    .keywords span {
-      display: inline-block;
-      background: #e0ecff;
-      padding: 5px 8px;
-      margin: 4px;
-      border-radius: 4px;
-      font-size: 13px;
-    }
-    .missing span {
-      background: #ffe0e0;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      background: #f1f1f1;
-    }
-    .ad-box {
-      background: #eee;
-      text-align: center;
-      padding: 20px;
-      margin: 20px 0;
-      font-size: 14px;
-      color: #666;
-    }
-  </style>
+<!-- Mammoth.js for DOCX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+
+<style>
+body { font-family: Arial, sans-serif; background:#f6f8fa; margin:0; }
+header { background:#0a66c2; color:#fff; padding:20px; text-align:center; }
+main { max-width:1000px; margin:auto; background:#fff; padding:20px; }
+textarea, input[type="file"] { width:100%; margin-bottom:15px; padding:10px; }
+button { background:#0a66c2; color:#fff; border:none; padding:12px 20px; cursor:pointer; }
+.result { background:#f0f7ff; padding:15px; margin-top:20px; }
+.score { font-size:28px; font-weight:bold; }
+.keywords span { background:#e0ecff; padding:5px 8px; margin:4px; display:inline-block; }
+.missing span { background:#ffe0e0; }
+.ad-box { background:#eee; padding:20px; text-align:center; margin:20px 0; }
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>ATS Resume Checker – Free Resume ATS Score Tool</h1>
-  <p>Analyze your resume, beat ATS systems, and increase interview chances</p>
+<h1>ATS Resume Checker</h1>
+<p>Upload your resume file & beat ATS systems</p>
 </header>
 
 <main>
 
-  <!-- AD PLACEHOLDER -->
-  <div class="ad-box">AdSense Ad Space</div>
+<div class="ad-box">AdSense Ad Space</div>
 
-  <h2>Check Your Resume Against Any Job Description</h2>
+<h2>Upload Resume File</h2>
+<input type="file" id="resumeFile" accept=".pdf,.docx,.txt">
 
-  <label><strong>Paste Your Resume Text</strong></label>
-  <textarea id="resumeText" placeholder="Paste your resume here..."></textarea>
+<h2>Paste Job Description</h2>
+<textarea id="jobText" placeholder="Paste job description here..."></textarea>
 
-  <label><strong>Paste Job Description</strong></label>
-  <textarea id="jobText" placeholder="Paste job description here..."></textarea>
+<button onclick="processResume()">Check ATS Score</button>
 
-  <button onclick="analyzeResume()">Check ATS Score</button>
+<div id="output" class="result" style="display:none;"></div>
 
-  <div id="output" class="result" style="display:none;"></div>
-
-  <!-- AD PLACEHOLDER -->
-  <div class="ad-box">In-content Ad Space</div>
-
-  <h2>How This ATS Resume Checker Works</h2>
-  <p>
-    Applicant Tracking Systems (ATS) are used by most companies to filter resumes
-    before a human recruiter ever sees them. This ATS Resume Checker compares your
-    resume content with the job description to identify keyword matches, missing
-    skills, and formatting issues that could lower your ATS score.
-  </p>
-
-  <h2>Example: Resume vs Job Description</h2>
-  <p>
-    If a job description mentions skills like <strong>JavaScript, HTML, CSS, GitHub</strong>
-    and your resume lacks these keywords, ATS may reject your application automatically.
-    Our tool highlights exactly what is missing so you can optimize your resume.
-  </p>
-
-  <h2>Why ATS Optimization Matters</h2>
-  <p>
-    Over 75% of resumes are rejected by ATS before reaching recruiters. Optimizing
-    your resume with relevant keywords, clean formatting, and clear job alignment
-    dramatically increases your chances of getting shortlisted.
-  </p>
-
-  <h2>Common Resume Mistakes (ATS)</h2>
-  <ul>
-    <li>Using images, tables, or graphics</li>
-    <li>Missing job-specific keywords</li>
-    <li>Complex formatting</li>
-    <li>Generic resumes for all jobs</li>
-  </ul>
-
-  <h2>FAQs</h2>
-  <h3>Is this ATS Resume Checker free?</h3>
-  <p>Yes, this tool is completely free to use.</p>
-
-  <h3>Does ATS score guarantee a job?</h3>
-  <p>No, but it significantly improves your chances of passing ATS screening.</p>
-
-  <h3>Is my resume data safe?</h3>
-  <p>Yes. All analysis happens in your browser. No data is stored.</p>
-
-  <h2>Related Career Tools (Coming Soon)</h2>
-  <ul>
-    <li>Resume Keyword Analyzer</li>
-    <li>Job Match Score Tool</li>
-    <li>Cover Letter Generator</li>
-    <li>Skill Gap Analyzer</li>
-  </ul>
+<div class="ad-box">In-content Ad Space</div>
 
 </main>
 
-<footer>
-  <p>
-    © 2025 ATS Resume Tools |
-    <a href="#">About</a> |
-    <a href="#">Contact</a> |
-    <a href="#">Privacy Policy</a> |
-    <a href="#">Disclaimer</a>
-  </p>
-</footer>
-
 <script>
-function analyzeResume() {
-  const resume = document.getElementById("resumeText").value.toLowerCase();
-  const job = document.getElementById("jobText").value.toLowerCase();
+async function processResume() {
+  const fileInput = document.getElementById("resumeFile");
+  const jobText = document.getElementById("jobText").value.toLowerCase();
   const output = document.getElementById("output");
 
-  if (!resume || !job) {
-    alert("Please paste both resume and job description.");
+  if (!fileInput.files.length || !jobText) {
+    alert("Please upload resume file and paste job description.");
     return;
   }
+
+  const file = fileInput.files[0];
+  let resumeText = "";
+
+  if (file.name.endsWith(".txt")) {
+    resumeText = await file.text();
+  }
+
+  else if (file.name.endsWith(".pdf")) {
+    const pdfData = new Uint8Array(await file.arrayBuffer());
+    const pdf = await pdfjsLib.getDocument(pdfData).promise;
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      resumeText += content.items.map(item => item.str).join(" ");
+    }
+  }
+
+  else if (file.name.endsWith(".docx")) {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    resumeText = result.value;
+  }
+
+  else {
+    alert("Unsupported file type.");
+    return;
+  }
+
+  analyzeATS(resumeText.toLowerCase(), jobText);
+}
+
+function analyzeATS(resume, job) {
+  const output = document.getElementById("output");
 
   const jobWords = [...new Set(job.match(/\b[a-z]{3,}\b/g))];
   let matched = [];
   let missing = [];
 
   jobWords.forEach(word => {
-    if (resume.includes(word)) {
-      matched.push(word);
-    } else {
-      missing.push(word);
-    }
+    resume.includes(word) ? matched.push(word) : missing.push(word);
   });
 
-  let score = Math.round((matched.length / jobWords.length) * 100);
+  const score = Math.round((matched.length / jobWords.length) * 100);
 
   output.style.display = "block";
   output.innerHTML = `
@@ -218,7 +124,7 @@ function analyzeResume() {
     <ul>
       <li>Add missing keywords naturally</li>
       <li>Use simple formatting</li>
-      <li>Customize resume for each job</li>
+      <li>Avoid images & tables</li>
     </ul>
   `;
 }
